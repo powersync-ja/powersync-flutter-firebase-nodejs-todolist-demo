@@ -47,28 +47,28 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDlGap7lRMi1-_i97Wk8PSy8s0tpuDMYBw',
-    appId: '1:879921616597:android:9593feda8e3e27e50b745c',
-    messagingSenderId: '879921616597',
-    projectId: 'kobie-powersync-testing',
-    storageBucket: 'kobie-powersync-testing.appspot.com',
+    apiKey: '',
+    appId: '',
+    messagingSenderId: '',
+    projectId: '',
+    storageBucket: '',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDojWgY2sttGKbzMOU0tWk9JvZlQKzoHyE',
-    appId: '1:879921616597:ios:0d0afa4d1d1195410b745c',
-    messagingSenderId: '879921616597',
-    projectId: 'kobie-powersync-testing',
-    storageBucket: 'kobie-powersync-testing.appspot.com',
-    iosBundleId: 'co.powersync.demotodolist',
+    apiKey: '',
+    appId: '',
+    messagingSenderId: '',
+    projectId: '',
+    storageBucket: '',
+    iosBundleId: '',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDojWgY2sttGKbzMOU0tWk9JvZlQKzoHyE',
-    appId: '1:879921616597:ios:0d0afa4d1d1195410b745c',
-    messagingSenderId: '879921616597',
-    projectId: 'kobie-powersync-testing',
-    storageBucket: 'kobie-powersync-testing.appspot.com',
-    iosBundleId: 'co.powersync.demotodolist',
+    apiKey: '',
+    appId: '',
+    messagingSenderId: '',
+    projectId: '',
+    storageBucket: '',
+    iosBundleId: '',
   );
 }
