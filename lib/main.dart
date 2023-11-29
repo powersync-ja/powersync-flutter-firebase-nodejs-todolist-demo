@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-
 import './powersync.dart';
+
 import './widgets/lists_page.dart';
 import './widgets/login_page.dart';
 import './widgets/query_widget.dart';
@@ -30,6 +30,7 @@ void main() async {
       .ensureInitialized(); //required to get sqlite filepath from path_provider before UI has initialized
   await openDatabase();
   final loggedIn = isLoggedIn();
+
   runApp(MyApp(loggedIn: loggedIn));
 }
 

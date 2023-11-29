@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../main.dart';
 
 class SignupPage extends StatefulWidget {
@@ -30,32 +29,35 @@ class _SignupPageState extends State<SignupPage> {
       _busy = true;
       _error = null;
     });
-    try {
-      final response = await Supabase.instance.client.auth.signUp(
-          email: _usernameController.text, password: _passwordController.text);
-
-      if (mounted) {
-        if (response.session != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
+   try {
+     final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+       email: _usernameController.text,
+       password: _passwordController.text,
+     );
+     if(mounted) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => homePage,
-          ));
-        } else {
-          Navigator.of(context).pop();
-        }
-      }
-    } on AuthException catch (e) {
-      setState(() {
-        _error = e.message;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-      });
-    } finally {
-      setState(() {
+        ));
+     }
+   } on FirebaseAuthException catch (e) {
+     if (e.code == 'weak-password') {
+         setState(() {
+            _error = 'The password provided is too weak.';
+         });
+     } else if (e.code == 'email-already-in-use') {
+        setState(() {
+            _error = 'The account already exists for that email.';
+        });
+     }
+   } catch (e) {
+       setState(() {
+         _error = e.toString();
+       });
+   } finally {
+    setState(() {
         _busy = false;
-      });
-    }
+    });
+   }
   }
 
   @override

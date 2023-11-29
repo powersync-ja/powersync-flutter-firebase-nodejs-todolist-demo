@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDojWgY2sttGKbzMOU0tWk9JvZlQKzoHyE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>879921616597</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>co.powersync.demotodolist</string>
+	<key>PROJECT_ID</key>
+	<string>kobie-powersync-testing</string>
+	<key>STORAGE_BUCKET</key>
+	<string>kobie-powersync-testing.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:879921616597:ios:0d0afa4d1d1195410b745c</string>
+</dict>
+</plist>

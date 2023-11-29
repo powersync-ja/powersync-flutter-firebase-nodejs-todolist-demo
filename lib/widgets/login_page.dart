@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../main.dart';
 
 class LoginPage extends StatefulWidget {
@@ -30,28 +29,35 @@ class _LoginPageState extends State<LoginPage> {
       _busy = true;
       _error = null;
     });
-    try {
-      await Supabase.instance.client.auth.signInWithPassword(
-          email: _usernameController.text, password: _passwordController.text);
-
-      if (mounted) {
+   try {
+     final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+       email: _usernameController.text,
+       password: _passwordController.text
+     );
+     if(mounted) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => listsPage,
         ));
-      }
-    } on AuthException catch (e) {
-      setState(() {
-        _error = e.message;
-      });
-    } catch (e) {
+     }
+   } on FirebaseAuthException catch (e) {
+     if (e.code == 'user-not-found') {
+         setState(() {
+            _error = 'No user found for that email.';
+         });
+     } else if (e.code == 'wrong-password') {
+        setState(() {
+            _error = 'Wrong password provided for that user.';
+        });
+     }
+   } catch (e) {
       setState(() {
         _error = e.toString();
       });
-    } finally {
-      setState(() {
-        _busy = false;
-      });
-    }
+   } finally {
+    setState(() {
+       _busy = false;
+    });
+   }
   }
 
   @override
@@ -71,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text('Supabase Login'),
+                      const Text('Firebase Email Login'),
                       const SizedBox(height: 35),
                       TextFormField(
                         controller: _usernameController,
