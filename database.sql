@@ -11,7 +11,7 @@ create table
 create table
   public.todos (
     id text not null,
-    created_at timestamp with time zone not null default now(),
+    created_at timestamp with time zone null default now(),
     completed_at timestamp with time zone null,
     description text not null,
     completed boolean not null default false,

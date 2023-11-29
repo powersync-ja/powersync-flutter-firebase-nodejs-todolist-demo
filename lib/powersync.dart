@@ -192,9 +192,9 @@ delete (data) async {
     );
 
     if (response.statusCode == 200) {
-      log.info('PUT request successful: ${response.body}');
+      log.info('DELETE request successful: ${response.body}');
     } else {
-      log.severe('PUT request failed with status: ${response.statusCode}');
+      log.severe('DELETE request failed with status: ${response.statusCode}');
     }
   } catch (e) {
     log.severe('Exception occurred: $e');
