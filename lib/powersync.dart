@@ -34,11 +34,9 @@ class BackendConnector extends PowerSyncBackendConnector {
 
   BackendConnector(this.db);
 
-  /// Get a Supabase token to authenticate against the PowerSync instance.
+  /// Get a token to authenticate against the PowerSync instance.
   @override
   Future<PowerSyncCredentials?> fetchCredentials() async {
-    // Wait for pending session refresh if any
-    // await _refreshFuture;
 
     final user = FirebaseAuth.instance.currentUser;
     if(user == null) {
@@ -80,7 +78,6 @@ class BackendConnector extends PowerSyncBackendConnector {
   @override
   void invalidateCredentials() {
     // Trigger a session refresh if auth fails on PowerSync.
-    // Generally, sessions should be refreshed automatically by Supabase.
     // However, in some cases it can be a while before the session refresh is
     // retried. We attempt to trigger the refresh as soon as we get an auth
     // failure on PowerSync.
@@ -90,10 +87,6 @@ class BackendConnector extends PowerSyncBackendConnector {
     //
     // Timeout the refresh call to avoid waiting for long retries,
     // and ignore any errors. Errors will surface as expired tokens.
-    // _refreshFuture = Supabase.instance.client.auth
-    //     .refreshSession()
-    //     .timeout(const Duration(seconds: 5))
-    //     .then((response) => null, onError: (error) => null);
   }
 
   // Upload pending changes to Node.js Backend.

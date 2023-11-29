@@ -59,10 +59,12 @@ ORDER BY created_at
 
   /// Create a new list
   static Future<TodoList> create(String name) async {
+    final userId = getUserId();
+    log.info('userId $userId');
     final results = await db.execute('''INSERT INTO
            lists(id, created_at, name, owner_id)
            VALUES(uuid(), datetime(), ?, ?)
-           RETURNING *''', [name, getUserId()]);
+           RETURNING *''', [name, userId]);
     return TodoList.fromRow(results.first);
   }
 
