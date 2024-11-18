@@ -17,13 +17,6 @@ class ListItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    viewList() {
-      var navigator = Navigator.of(context);
-
-      navigator.push(
-          MaterialPageRoute(builder: (context) => TodoListPage(list: list)));
-    }
-
     final subtext =
         '${list.pendingCount} pending, ${list.completedCount} completed';
 
@@ -32,7 +25,10 @@ class ListItemWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-              onTap: viewList,
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => TodoListPage(list: list)));
+              },
               leading: const Icon(Icons.list),
               title: Text(list.name),
               subtitle: Text(subtext)),
