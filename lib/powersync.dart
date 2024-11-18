@@ -29,7 +29,7 @@ final List<RegExp> fatalResponseCodes = [
 /// Use Custom Node.js backend for authentication and data upload.
 class BackendConnector extends PowerSyncBackendConnector {
   PowerSyncDatabase db;
-
+  //ignore: unused_field
   Future<void>? _refreshFuture;
 
   BackendConnector(this.db);
