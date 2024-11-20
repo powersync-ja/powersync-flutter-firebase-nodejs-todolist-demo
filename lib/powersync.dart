@@ -29,7 +29,7 @@ final List<RegExp> fatalResponseCodes = [
 /// Use Custom Node.js backend for authentication and data upload.
 class BackendConnector extends PowerSyncBackendConnector {
   PowerSyncDatabase db;
-
+  //ignore: unused_field
   Future<void>? _refreshFuture;
 
   BackendConnector(this.db);
@@ -37,10 +37,9 @@ class BackendConnector extends PowerSyncBackendConnector {
   /// Get a token to authenticate against the PowerSync instance.
   @override
   Future<PowerSyncCredentials?> fetchCredentials() async {
-
     final user = FirebaseAuth.instance.currentUser;
-    if(user == null) {
-    // Not logged in
+    if (user == null) {
+      // Not logged in
       return null;
     }
     final idToken = await user.getIdToken();
@@ -64,7 +63,8 @@ class BackendConnector extends PowerSyncBackendConnector {
       // userId and expiresAt are for debugging purposes only
       final expiresAt = parsedBody['expiresAt'] == null
           ? null
-          : DateTime.fromMillisecondsSinceEpoch(parsedBody['expiresAt']! * 1000);
+          : DateTime.fromMillisecondsSinceEpoch(
+              parsedBody['expiresAt']! * 1000);
       return PowerSyncCredentials(
           endpoint: parsedBody['powerSyncUrl'],
           token: parsedBody['token'],
@@ -72,6 +72,7 @@ class BackendConnector extends PowerSyncBackendConnector {
           expiresAt: expiresAt);
     } else {
       print('Request failed with status: ${response.statusCode}');
+      return null;
     }
   }
 
@@ -109,25 +110,36 @@ class BackendConnector extends PowerSyncBackendConnector {
 
         var row = Map<String, dynamic>.of(op.opData!);
         row['id'] = op.id;
-        Map<String, dynamic> data = {
-          "table": op.table,
-          "data": row
-        };
-
+        Map<String, dynamic> data = {"table": op.table, "data": row};
         if (op.op == UpdateType.put) {
           await upsert(data);
         } else if (op.op == UpdateType.patch) {
           await update(data);
         } else if (op.op == UpdateType.delete) {
+          data = {
+            "table": op.table,
+            "data": {"id": op.id}
+          };
           await delete(data);
         }
       }
 
       // All operations successful.
       await transaction.complete();
+    } on http.ClientException catch (e) {
+      // Error may be retryable - e.g. network error or temporary server error.
+      // Throwing an error here causes this call to be retried after a delay.
+      log.warning('Client exception', e);
+      rethrow;
     } catch (e) {
-      log.severe('Failed to update object $e');
-      transaction.complete();
+      /// Instead of blocking the queue with these errors,
+      /// discard the (rest of the) transaction.
+      ///
+      /// Note that these errors typically indicate a bug in the application.
+      /// If protecting against data loss is important, save the failing records
+      /// elsewhere instead of discarding, and/or notify the user.
+      log.severe('Data upload error - discarding $lastOp', e);
+      await transaction.complete();
     }
   }
 }
@@ -135,7 +147,7 @@ class BackendConnector extends PowerSyncBackendConnector {
 /// Global reference to the database
 late final PowerSyncDatabase db;
 
-upsert (data) async {
+upsert(data) async {
   var url = Uri.parse("${AppConfig.backendUrl}/api/data");
 
   try {
@@ -154,10 +166,11 @@ upsert (data) async {
     }
   } catch (e) {
     log.severe('Exception occurred: $e');
+    rethrow;
   }
 }
 
-update (data) async {
+update(data) async {
   var url = Uri.parse("${AppConfig.backendUrl}/api/data");
 
   try {
@@ -176,10 +189,11 @@ update (data) async {
     }
   } catch (e) {
     log.severe('Exception occurred: $e');
+    rethrow;
   }
 }
 
-delete (data) async {
+delete(data) async {
   var url = Uri.parse("${AppConfig.backendUrl}/api/data");
 
   try {
@@ -198,6 +212,7 @@ delete (data) async {
     }
   } catch (e) {
     log.severe('Exception occurred: $e');
+    rethrow;
   }
 }
 
@@ -219,7 +234,11 @@ Future<String> getDatabasePath() async {
 
 Future<void> openDatabase() async {
   // Open the local database
-  db = PowerSyncDatabase(schema: schema, path: await getDatabasePath());
+  db = PowerSyncDatabase(
+    schema: schema,
+    path: await getDatabasePath(),
+    logger: attachedLogger,
+  );
   await db.initialize();
   BackendConnector? currentConnector;
 
@@ -235,9 +254,7 @@ Future<void> openDatabase() async {
     log.info('User not logged in, setting connection');
   }
 
-  FirebaseAuth.instance
-      .authStateChanges()
-      .listen((User? user) async {
+  FirebaseAuth.instance.authStateChanges().listen((User? user) async {
     if (user != null) {
       // Connect to PowerSync when the user is signed in
       currentConnector = BackendConnector(db);
@@ -252,5 +269,5 @@ Future<void> openDatabase() async {
 /// Explicit sign out - clear database and log out.
 Future<void> logout() async {
   await FirebaseAuth.instance.signOut();
-  await db.disconnectedAndClear();
+  await db.disconnectAndClear();
 }

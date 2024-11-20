@@ -29,35 +29,35 @@ class _SignupPageState extends State<SignupPage> {
       _busy = true;
       _error = null;
     });
-   try {
-     final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-       email: _usernameController.text,
-       password: _passwordController.text,
-     );
-     if(mounted) {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _usernameController.text,
+        password: _passwordController.text,
+      );
+      if (context.mounted) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => homePage,
+          builder: (context) => homePage,
         ));
-     }
-   } on FirebaseAuthException catch (e) {
-     if (e.code == 'weak-password') {
-         setState(() {
-            _error = 'The password provided is too weak.';
-         });
-     } else if (e.code == 'email-already-in-use') {
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
         setState(() {
-            _error = 'The account already exists for that email.';
+          _error = 'The password provided is too weak.';
         });
-     }
-   } catch (e) {
-       setState(() {
-         _error = e.toString();
-       });
-   } finally {
-    setState(() {
+      } else if (e.code == 'email-already-in-use') {
+        setState(() {
+          _error = 'The account already exists for that email.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+      });
+    } finally {
+      setState(() {
         _busy = false;
-    });
-   }
+      });
+    }
   }
 
   @override

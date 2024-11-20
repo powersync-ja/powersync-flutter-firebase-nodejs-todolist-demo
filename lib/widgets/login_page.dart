@@ -29,35 +29,33 @@ class _LoginPageState extends State<LoginPage> {
       _busy = true;
       _error = null;
     });
-   try {
-     final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-       email: _usernameController.text,
-       password: _passwordController.text
-     );
-     if(mounted) {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _usernameController.text, password: _passwordController.text);
+      if (context.mounted) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => listsPage,
         ));
-     }
-   } on FirebaseAuthException catch (e) {
-     if (e.code == 'user-not-found') {
-         setState(() {
-            _error = 'No user found for that email.';
-         });
-     } else if (e.code == 'wrong-password') {
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
         setState(() {
-            _error = 'Wrong password provided for that user.';
+          _error = 'No user found for that email.';
         });
-     }
-   } catch (e) {
+      } else if (e.code == 'wrong-password') {
+        setState(() {
+          _error = 'Wrong password provided for that user.';
+        });
+      }
+    } catch (e) {
       setState(() {
         _error = e.toString();
       });
-   } finally {
-    setState(() {
-       _busy = false;
-    });
-   }
+    } finally {
+      setState(() {
+        _busy = false;
+      });
+    }
   }
 
   @override
